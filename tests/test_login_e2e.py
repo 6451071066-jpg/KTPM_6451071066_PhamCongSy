@@ -204,3 +204,21 @@ class TestLoginUTC:
             assert "tài khoản hoặc mật khẩu không đúng" in error_text.lower(), (
                 f"Submit form bằng phím Enter thất bại hoặc thông báo không đúng: '{error_text}'"
             )
+
+    @allure.story("Bảo mật chống Injection")
+    @allure.title("TC16: Kiểm tra phòng chống tấn công Cross-Site Scripting (XSS)")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_tc16_xss_injection_defense(self, driver):
+        """Kiểm tra hệ thống lọc và xử lý an toàn mã độc script XSS trong ô nhập liệu."""
+        with allure.step("1. Mở trang đăng nhập UTC"):
+            login_page = LoginPage(driver).open()
+
+        with allure.step("2. Nhập payload XSS script vào Tên đăng nhập"):
+            xss_payload = "<script>alert('XSS_ATTACK')</script>"
+            login_page.login(username=xss_payload, password="Password123@")
+
+        with allure.step("3. Xác nhận script không thực thi và hệ thống trả về thông báo an toàn"):
+            error_text = login_page.get_error_message()
+            assert "tài khoản hoặc mật khẩu không đúng" in error_text.lower(), (
+                f"Hệ thống không xử lý an toàn payload XSS! Thông báo thực tế: '{error_text}'"
+            )
