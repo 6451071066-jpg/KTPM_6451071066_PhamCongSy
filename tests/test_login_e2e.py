@@ -187,3 +187,20 @@ class TestLoginUTC:
             assert "tài khoản hoặc mật khẩu không đúng" in error_text.lower(), (
                 f"Hệ thống không xử lý an toàn payload SQL Injection! Thông báo thực tế: '{error_text}'"
             )
+
+    @allure.story("Trải nghiệm người dùng (UX) & Bàn phím")
+    @allure.title("TC15: Kiểm tra gửi form đăng nhập bằng phím ENTER")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_tc15_submit_form_with_enter_key(self, driver):
+        """Kiểm tra tính năng submit form bằng phím Enter trên bàn phím thay vì click nút Đăng nhập."""
+        with allure.step("1. Mở trang đăng nhập UTC"):
+            login_page = LoginPage(driver).open()
+
+        with allure.step("2. Nhập thông tin và nhấn phím ENTER tại trường mật khẩu"):
+            login_page.login_with_enter(username="sinhvien_utc_enter", password="MatKhauSai@123")
+
+        with allure.step("3. Xác nhận form được gửi đi và nhận phản hồi từ hệ thống"):
+            error_text = login_page.get_error_message()
+            assert "tài khoản hoặc mật khẩu không đúng" in error_text.lower(), (
+                f"Submit form bằng phím Enter thất bại hoặc thông báo không đúng: '{error_text}'"
+            )
