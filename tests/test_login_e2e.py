@@ -169,3 +169,21 @@ class TestLoginUTC:
 
         login_page.login(username=long_username, password=long_password)
         assert "tài khoản hoặc mật khẩu không đúng" in login_page.get_error_message().lower()
+
+    @allure.story("Bảo mật chống Injection")
+    @allure.title("TC14: Kiểm tra phòng chống tấn công SQL Injection")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_tc14_sql_injection_defense(self, driver):
+        """Kiểm tra hệ thống xử lý an toàn trước tấn công SQL Injection, không crash hoặc bypass."""
+        with allure.step("1. Mở trang đăng nhập UTC"):
+            login_page = LoginPage(driver).open()
+
+        with allure.step("2. Nhập payload SQL Injection vào Tên đăng nhập và Mật khẩu"):
+            sql_payload = "' OR '1'='1"
+            login_page.login(username=sql_payload, password=sql_payload)
+
+        with allure.step("3. Xác thực hệ thống từ chối và hiển thị thông báo lỗi an toàn"):
+            error_text = login_page.get_error_message()
+            assert "tài khoản hoặc mật khẩu không đúng" in error_text.lower(), (
+                f"Hệ thống không xử lý an toàn payload SQL Injection! Thông báo thực tế: '{error_text}'"
+            )
