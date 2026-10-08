@@ -17,3 +17,16 @@ class TestLoginUTC:
         assert login_page.get_password_input_type() == "password", (
             "Trường mật khẩu không được ẩn ký tự!"
         )
+
+    @allure.story("Tương tác giao diện")
+    @allure.title("TC02: Kiểm tra toggle checkbox 'Giữ tôi luôn đăng nhập'")
+    @allure.severity(allure.severity_level.MINOR)
+    def test_tc02_remember_me_toggle(self, driver):
+        """Kiểm tra tương tác bật/tắt checkbox lưu phiên đăng nhập."""
+        login_page = LoginPage(driver).open()
+        initial_state = login_page.is_remember_me_selected()
+
+        login_page.toggle_remember_me()
+        assert login_page.is_remember_me_selected() != initial_state, (
+            "Trạng thái checkbox không thay đổi sau khi click!"
+        )
